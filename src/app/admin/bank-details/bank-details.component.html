@@ -1,0 +1,120 @@
+<app-admin-nav></app-admin-nav>
+<div class="row" style="margin-top: 3%;">
+    <form [formGroup]="detailsForm">
+    <div class="card col-4" style="margin-left: 32%;">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div class="row">
+                    <span class="col-4"><strong>Bic</strong></span>
+                    <span class="col-8">{{ bank.bic }}</span>
+                </div>
+            </li>
+        
+            <li class="list-group-item">
+                <div class="row">
+                    <span class="col-4"><strong>Inst. name</strong></span>
+                    <span class="col-8">{{ bank.instName }}</span>
+                </div>
+            </li>
+
+            <li class="list-group-item">
+                <div class="row">
+                    <span class="col-4"><strong>Branch info</strong></span>
+                    <span class="col-8">{{ bank.branchInfo }}</span>
+                </div>
+            </li>
+
+            <li class="list-group-item">
+                <div class="row">
+                    <span class="col-4"><strong>Address</strong></span>
+                    <span class="col-8">
+                        {{ bank.address.lines }},<br>
+                        {{ bank.address.town }},&nbsp;
+                        {{ bank.address.subdiv }},<br>
+                        {{ bank.address.zipcode }},<br>
+                        {{ bank.address.country }},&nbsp;
+                        {{ bank.address.cCode }}.
+                    </span>
+                </div>
+            </li>
+
+            <li class="list-group-item">
+                <div class="row">
+                    <span class="col-4"><strong>Status</strong></span>
+                    <span class="col-8" *ngIf="mode == '0'">{{ bank.status }}</span>
+                    <span class="col-8" *ngIf="mode == '1'">
+                        <select class="form-select" id="status" formControlName="status">
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Suspended">Suspended</option>
+                        </select>
+                    </span>
+                </div>
+            </li>
+
+            <li class="list-group-item">
+                <div class="row">
+                    <span class="col-4"><strong>Currency</strong></span>
+                    <span class="col-8" *ngIf="mode == '0'">{{ bank.currency }}</span>
+                    <span class="col-8" *ngIf="mode == '1'">
+                        <select class="form-select" id="currency" formControlName="currency">
+                            <option value="EUR">EUR</option>
+                            <option value="USD">USD</option>
+                        </select>
+                    </span>
+                </div>
+            </li>
+
+            <li class="list-group-item">
+                <div class="row">
+                    <span class="col-4"><strong>Pay mode</strong></span>
+                    <span class="col-8" *ngIf="mode == '0'">{{ bank.payMode }}</span>
+                    <span class="col-8" *ngIf="mode == '1'">
+                        <select class="form-select" id="payMode" formControlName="payMode">
+                            <option value="X">X</option>
+                            <option value="Y">Y</option>
+                        </select>
+                    </span>
+                </div>
+            </li>
+        </ul>
+
+        <div class="card-body" *ngIf="mode == '1'">
+            <button type="submit" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#saveModal"
+            style="margin-left: 32%; width: 150px;" (click)="getChanges()">Save Changes</button>
+        </div>
+
+        <div class="modal fade" id="saveModal" tabindex="-1" aria-labelledby="saveLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="saveLabel">
+                            <span *ngIf="count != 1">{{ count }} changes have been made.</span>
+                            <span *ngIf="count == 1">{{ count }} change has been made.</span>
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <span *ngIf="statusChanged">
+                            Status changed from "{{ bank.status }}" to "{{ detailsForm.value.status }}".<br>
+                        </span>
+                        <span *ngIf="currencyChanged">
+                            Currency changed from "{{ bank.currency }}" to "{{ detailsForm.value.currency }}".<br>
+                        </span>
+                        <span *ngIf="paymodeChanged">
+                            Pay mode changed from "{{ bank.payMode }}" to "{{ detailsForm.value.payMode }}".<br>
+                        </span>
+                        <br *ngIf="count != 0">Do you wish to continue?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="cancel()">No</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="saveChanges()">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+    <div class="col-2">
+        <a class="btn btn-dark" style="margin-left: 20%;" [routerLink]="['/admin/banks', bank.status]">Back</a>
+    </div>
+</div>

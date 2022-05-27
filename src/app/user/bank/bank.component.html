@@ -1,0 +1,41 @@
+<app-user-nav></app-user-nav>
+<div style="margin-top: 3%;">
+    <form [formGroup]="selection" (submit)="display()">
+        <div class="input-group">
+            <span style="width: 150px;">
+                <select class="form-select" formControlName="filter">
+                    <option value="Approved">Approved</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Suspended">Suspended</option>
+                </select>
+            </span>
+            <button type="submit" class="btn btn-outline-primary">Filter</button>
+        </div> 
+    </form>
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Inst. name</th>
+            <th>Branch info</th>
+            <th>Address</th>
+            <th>Currency</th>
+            <th>Pay mode</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody aria-setsize="3">
+            <tr *ngFor="let bank of banks">
+                <td style="width: 16.5%;">{{ bank.instName }}</td>
+                <td style="width: 16.5%;">{{ bank.branchInfo }}</td>
+                <td style="width: 16.5%;">{{ bank.address.lines[0] }}...</td>
+                <td style="width: 16.5%;">{{ bank.currency }}</td>
+                <td style="width: 16.5%;">{{ bank.payMode }}</td>
+                <td style="width: 17.5%;">
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" style="width: 80px;" (click)="redirect(bank.bic)" class="btn btn-outline-primary">View</button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
