@@ -10,26 +10,26 @@ import { DbService } from '../db.service';
 })
 export class LoginComponent implements OnInit {
 
-  user: any
   isInvalid = false
   constructor(private fb: FormBuilder, private router: Router, private dbservice: DbService) {}
   ngOnInit() {
-    this.user = this.dbservice.getCurrentUser()
-    if (this.user) { this.redirect(this.user.isAdmin) }
+    let user = this.dbservice.getCurrentUser()
+    if (user) { this.redirect(user.isAdmin) }
   }
 
   loginForm = this.fb.group({ username: '', password: '' })
 
   login() {
-    this.user = this.dbservice.getUser(this.loginForm.value.username)
-    if (this.user.password != this.loginForm.value.password) {
-      this.isInvalid = true
-      this.loginForm.reset()
-    }
-    else {
-      this.dbservice.setCurrentUser(this.user)
-      this.redirect(this.user.isAdmin)
-    }
+    this.dbservice.getUser(this.loginForm.value.username).subscribe(user => {
+      if (user.password != this.loginForm.value.password) {
+        this.isInvalid = true
+        this.loginForm.reset()
+      }
+      else {
+        this.dbservice.setCurrentUser(user)
+        this.redirect(user.isAdmin)
+      }
+    })
   }
 
   redirect(isAdmin: boolean) {

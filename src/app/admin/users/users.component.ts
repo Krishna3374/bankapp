@@ -9,20 +9,30 @@ import { DbService } from 'src/app/db.service';
 })
 export class UsersComponent implements OnInit {
 
-  user = this.dbservice.getCurrentUser()
-  users = this.dbservice.getUsers()
+  users: any
   saveMode: boolean = true
+  userForm: any
   constructor(private fb: FormBuilder, private dbservice: DbService) { }
 
   ngOnInit(): void {
+    this.getUsers()
+    this.resetForm()
   }
 
-  userForm = this.fb.group({ username: '', password: '', isAdmin: false, status: 'Pending' })
+  resetForm() {
+    this.userForm = this.fb.group({ username: '', password: '', isAdmin: false, status: 'Pending' })
+  }
+
+  getUsers() {
+    this.dbservice.getUsers().subscribe(users => this.users = users)
+  }
 
   save() {
-    this.dbservice.addUser(this.userForm.value)
-    this.userForm = this.fb.group({ username: '', password: '', isAdmin: false, status: 'Pending' })
-    this.users = this.dbservice.getUsers()
+    this.dbservice.addUser(this.userForm.value).subscribe(res => { 
+      console.log(res)
+      this.getUsers()
+    })
+    this.resetForm()
   }
 
   display(user: any) {
@@ -32,19 +42,23 @@ export class UsersComponent implements OnInit {
 
   editUser() {
     this.saveMode = true
-    this.dbservice.editUser(this.userForm.value)
-    this.userForm = this.fb.group({ username: '', password: '', isAdmin: false, status: 'Pending' })
-    this.users = this.dbservice.getUsers()
+    this.dbservice.editUser(this.userForm.value.username, this.userForm.value).subscribe(res => { 
+      console.log(res)
+      this.getUsers()
+    })
+    this.resetForm()
   }
 
   clear() {
     this.saveMode = true
-    this.userForm = this.fb.group({ username: '', password: '', isAdmin: false, status: 'Pending' })
+    this.resetForm()
   }
 
   remove(username: string) {
-    this.dbservice.deleteUser(username)
-    this.users = this.dbservice.getUsers()
+    this.dbservice.deleteUser(username).subscribe(res => { 
+      console.log(res)
+      this.getUsers()
+    })
   }
 
 }

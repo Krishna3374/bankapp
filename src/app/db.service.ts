@@ -1,48 +1,42 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Address, Bank } from './entities/bank';
-import { User } from './entities/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DbService {
 
+  url = 'http://localhost:3000/'
+  constructor(private http: HttpClient) {}
+
   static currentUser: User | null = null
   getCurrentUser() { return DbService.currentUser }
   setCurrentUser(user: User | null) { DbService.currentUser = user }
 
-  users: User[] = [
-    new User('Smith', '123', true, 'Approved'),
-    new User('Jacob', '456', false, 'Pending'),
-    new User('Harry', '789', false, 'Suspended')
-  ]
-
-  getUser(username: string): User | undefined {
-    return this.users.find(user => user.username == username)
+  getUser(username: string) {
+    return this.http.get<User>(this.url + 'users/' + username)
   }
 
-  getUsers(): User[] {
-    return this.users
+  getUsers() {
+    return this.http.get<User[]>(this.url + 'users')
   }
 
   addUser(user: User) {
-    this.users.push(user)
+    return this.http.post(this.url + 'users', user)
   }
 
-  editUser(user: User) {
-    let index = this.users.findIndex(u => u.username == user.username)
-    this.users[index] = user
+  editUser(username: string, user: User) {
+    return this.http.put(this.url + 'users/' + username, user)
   }
 
   deleteUser(username: string) {
-    let index = this.users.findIndex(user => user.username == username)
-    this.users.splice(index, 1)
+    return this.http.delete(this.url + 'users/' + username)
   }
 
-  banks:  Bank[] = [
-    new Bank('DEUTDEFFXXX', 'DEUTSCHE BANK AG', 'Deutsche Bank Frankfurt F',
-    new Address(['TAUNUSANLAGE 12'], 'FRANKFURT AM MAIN', 'HESSE', 60262, 'GERMANY', 'DE'), ['EUR'], ['X'], 'Pending')
-  ]
+  banks:  Bank[] = []
+  //   new Bank('DEUTDEFFXXX', 'DEUTSCHE BANK AG', 'Deutsche Bank Frankfurt F',
+  //   new Address(['TAUNUSANLAGE 12'], 'FRANKFURT AM MAIN', 'HESSE', 60262, 'GERMANY', 'DE'), ['EUR'], ['X'], 'Pending')
+  // ]
 
   getBanksBy(status: string): Bank[] {
     return this.banks.filter(bank => bank.status == status)
@@ -60,4 +54,52 @@ export class DbService {
   getBankRef(bic: string) {
     return this.banks.find(bank => bank.bic == bic)
   }
+}
+
+interface User {
+
+  username: string
+
+  password: string
+
+  isAdmin: boolean
+
+  status: string
+
+}
+
+interface Address {
+
+  lines: string[]
+
+  town: string
+
+  subdiv: string
+
+  zipcode: number
+
+  country: string
+
+  code: string
+
+}
+
+interface Bank {
+
+  bic: string
+
+  instName: string
+
+  branchInfo: string
+
+  address: Address
+
+  currency: string[]
+
+  payMode: string[]
+
+  status: string
+
+  changes: any
+
 }
